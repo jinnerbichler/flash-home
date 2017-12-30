@@ -4,12 +4,11 @@ services:
 
   iri:
     image: jinnerbichler/iota-private-testnet
-    container_name: iri_node
     restart: always
     ports:
-      - "14265:14265"
-      - "14777:14777/udp"
-      - "15777:15777"
+      - "14267:14265"
+#      - "14777:14777/udp"
+#      - "15777:15777"
     volumes:
       - ./iota.ini:/iri/iota.ini
       - ./logback.xml:/iri/conf/logback.xml
@@ -27,15 +26,13 @@ services:
 
   coordinator:
     image: jinnerbichler/iota-coordinator
-    container_name: iri_coordinator
     command: ["--host=iri", "--port=14265", "--interval=60"]
     depends_on:
       - iri
 
   explorer:
     image: jinnerbichler/iota-tangle-explorer
-    container_name: iri_explorer
     ports:
-      - "8080:8080"
+      - "8081:8080"
     depends_on:
       - iri
