@@ -5,9 +5,9 @@
 // required for the channels use.          /////
 ////////////////////////////////////////////////
 
-const IOTACrypto = require("iota.crypto.js")
-const transfer = require("../lib/transfer")
-const multisig = require("../lib/multisig")
+const IOTACrypto = require("iota.crypto.js");
+const transfer = require("./iota.flash.js/lib/transfer");
+const multisig = require("./iota.flash.js/lib/multisig");
 
 const createTransaction = (user, actions, close) => {
   //////////////////////////////

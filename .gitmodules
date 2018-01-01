@@ -1,0 +1,3 @@
+[submodule "flash_server/lib/iota.flash.js"]
+	path = flash_server/lib/iota.flash.js
+	url = https://github.com/iotaledger/iota.flash.js
