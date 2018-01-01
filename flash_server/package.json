@@ -11,7 +11,10 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "iota.crypto.js": "l3wi/iota.crypto.js.git",
+    "iota.flash.js": "l3wi/iota.flash.js.git",
+    "iota.lib.js": "^0.4.6"
   },
   "devDependencies": {
     "nodemon": "^1.14.7"
