@@ -223,11 +223,11 @@ var bundles = Helpers.createTransaction(oneFlash, transfers, false)
 // Get signatures for the bundles
 let oneSignatures = Helpers.signTransaction(oneFlash, bundles)
 
-// Generate USER TWO'S Singatures
-let twoSignatures = Helpers.signTransaction(twoFlash, bundles)
-
 // Sign bundle with your USER ONE'S signatures
 let signedBundles = transfer.appliedSignatures(bundles, oneSignatures)
+
+// Generate USER TWO'S Singatures
+let twoSignatures = Helpers.signTransaction(twoFlash, bundles)
 
 // ADD USER TWOS'S signatures to the partially signed bundles
 signedBundles = transfer.appliedSignatures(signedBundles, twoSignatures)
