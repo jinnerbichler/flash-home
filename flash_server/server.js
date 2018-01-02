@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.post('/init', validate(schemas.init), function (req, res) {
 
     let initValues = req.body;
-    console.log(`Initialing flash with ${JSON.stringify(initValues)}`);
+    console.log(`Initializing flash with ${JSON.stringify(initValues)}`);
 
     // check sum of deposits
     if (initValues.deposit.reduce((a, b) => a + b, 0) !== initValues.balance) {
