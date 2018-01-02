@@ -1,19 +1,14 @@
 "use strict";
 const express = require('express');
 const bodyParser = require('body-parser');
+const validate = require('express-validation');
 const transfer = require("./lib/iota.flash.js/lib/transfer");
 const multisig = require("./lib/iota.flash.js/lib/multisig");
 const flashUtils = require("./lib/flash-utils");
 const storage = require("./lib/storage");
+const schemas = require("./lib/schemas");
 
 const SEED = process.env.IOTA_SEED;
-
-// default configurations
-const SECURITY = 2;
-const SIGNERS_COUNT = 2; // number of parties taking signing part in the channel
-const TREE_DEPTH = 4; // flash tree depth
-const CHANNEL_BALANCE = 2000; // total channel Balance
-const DEPOSITS = [1000, 1000]; // users deposits
 
 let app = express();
 app.use(bodyParser.json());
@@ -22,25 +17,29 @@ app.use(bodyParser.urlencoded({extended: false}));
 // -------------------------------------------------
 // -------------- Flash Intialisation --------------
 // -------------------------------------------------
-app.put('/init', function (req, res) {
-
-    // ToDo: validate input
+app.post('/init', validate(schemas.init), function (req, res) {
 
     let initValues = req.body;
     console.log(`Initialing flash with ${JSON.stringify(initValues)}`);
+
+    // check sum of deposits
+    if (initValues.deposit.reduce((a, b) => a + b, 0) !== initValues.balance) {
+        res.send(400, 'Deposits / balance mismatch');
+        return;
+    }
 
     // initialise flash object
     let flash = {
         userIndex: initValues.userIndex,
         index: initValues.index,
-        security: initValues.security || SECURITY,
-        depth: initValues.depth || TREE_DEPTH,
+        security: initValues.security,
+        depth: initValues.depth,
         bundles: [],
         partialDigests: [],
         flash: {
-            signersCount: initValues.signersCount || SIGNERS_COUNT,
-            balance: initValues.balance || CHANNEL_BALANCE,
-            deposit: initValues.deposit || DEPOSITS,
+            signersCount: initValues.signersCount,
+            balance: initValues.balance,
+            deposit: initValues.deposit,
             outputs: {},
             transfers: []
         }
@@ -64,9 +63,9 @@ app.put('/init', function (req, res) {
 });
 
 // -------------------------------------------------
-// ------- Multisignature Address Generation -------
+// ------- Generate Multisignature Addresses -------
 // -------------------------------------------------
-app.post('/multisignature', function (req, res) {
+app.post('/multisignature', validate(schemas.multisignature), function (req, res) {
 
     let allDigests = req.body.allDigests;
     console.log(`Creating ${allDigests[0].length} multisignature addresses for ${allDigests.length} users`);
@@ -94,7 +93,7 @@ app.post('/multisignature', function (req, res) {
         return addy
     });
 
-    // set remainder address (Same on both users)
+    // set remainder address (same for all users)
     flash.flash.remainderAddress = multisignatureAddresses.shift();
 
     // nest trees
@@ -114,20 +113,21 @@ app.post('/multisignature', function (req, res) {
 // -------------------------------------------------
 // ----------- Set Settlement Addresses ------------
 // -------------------------------------------------
-app.post('/settlement', function (req, res) {
+app.post('/settlement', validate(schemas.settlement), function (req, res) {
 
-    console.log('Adding settlement addresses');
+    const settlementAddresses = req.body.settlementAddresses;
+    console.log(`Adding ${settlementAddresses.length} settlement addresses`);
 
     let flash = storage.get('flash');
-    flash.flash.settlementAddresses = req.body.settlementAddresses;
+    flash.flash.settlementAddresses = settlementAddresses;
     storage.set('flash', flash);
     res.json(flash);
 });
 
 // -------------------------------------------------
-// ----------------- Transfer  ---------------------
+// ------------ Create Transfer Bundles-------------
 // -------------------------------------------------
-app.post('/transfer', function (req, res) {
+app.post('/transfer', validate(schemas.transfer), function (req, res) {
 
     // ToDO: check each address if it is not the one in the flash object
 
@@ -143,7 +143,7 @@ app.post('/transfer', function (req, res) {
 // -------------------------------------------------
 // ----------------- Sign Transactions -------------
 // -------------------------------------------------
-app.post('/sign_transactions', function (req, res) {
+app.post('/sign', validate(schemas.sign), function (req, res) {
 
     let bundles = req.body.bundles;
     console.log(`Signing ${bundles.length} transactions`);
@@ -151,8 +151,7 @@ app.post('/sign_transactions', function (req, res) {
     let flash = storage.get('flash');
 
     // get signatures for the bundles
-    flash.userSeed = SEED;  // should not be stored or returned in response
-    let signatures = flashUtils.signTransaction(flash, bundles);
+    let signatures = flashUtils.signTransaction(flash, SEED, bundles);
 
     // sign bundle with signatures
     let signedBundles = transfer.appliedSignatures(bundles, signatures);
@@ -163,10 +162,10 @@ app.post('/sign_transactions', function (req, res) {
 // -------------------------------------------------
 // --------------- Apply Signed Bundles ------------
 // -------------------------------------------------
-app.post('/apply_signature', function (req, res) {
+app.post('/apply', validate(schemas.apply), function (req, res) {
 
     let signedBundles = req.body.signedBundles;
-    console.log(`Applying signature to ${signedBundles.length} bundles`);
+    console.log(`Applying ${signedBundles.length} signed bundles`);
 
     // apply transfers to user
     let flash = storage.get('flash');
@@ -193,10 +192,16 @@ app.post('/close', function (req, res) {
 });
 
 // -------------------------------------------------
-// -------------- Current Flash Object -------------
+// -------------- Get Flash Object -----------------
 // -------------------------------------------------
 app.get('/flash', function (req, res) {
     res.json(storage.get('flash'));
+});
+
+// error handler
+app.use(function (err, req, res, next) {
+    res.status(400).json(err);
+    next();
 });
 
 app.listen(3000, function () {

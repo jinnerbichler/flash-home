@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+
+  user_one:
+    build: .
+    environment:
+      - "IOTA_SEED=USERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSER"
+    ports:
+      - "3000:3000"
+
+  user_two:
+    build: .
+    environment:
+      - "IOTA_SEED=USERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSER"
+    ports:
+      - "3001:3000"
