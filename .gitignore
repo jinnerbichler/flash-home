@@ -2,6 +2,6 @@
 infrastructure/testnet_db
 
 # flash server components
-flash_server/node_modules
-flash_server/package-lock.json
-flash_server/flash.db
+flash-server/node_modules
+flash-server/package-lock.json
+flash-server/flash.db
