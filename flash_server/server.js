@@ -57,7 +57,6 @@ app.post('/init', validate(schemas.init), function (req, res) {
     }
 
     storage.set('flash', flash);
-    console.log(`Initialised flash ${JSON.stringify(flash)}`);
 
     res.json(flash);
 });
