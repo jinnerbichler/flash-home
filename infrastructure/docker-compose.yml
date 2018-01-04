@@ -2,6 +2,7 @@ version: '3'
 
 services:
 
+  # https://github.com/jinnerbichler/iri/tree/private-testnet
   iri:
     image: jinnerbichler/iota-private-testnet
     restart: always
@@ -24,12 +25,29 @@ services:
       - "iri.jar"
       - "--remote"
 
+  # https://github.com/jinnerbichler/private-iota-testnet/tree/private-testnet
   coordinator:
     image: jinnerbichler/iota-coordinator
-    command: ["--host=iri", "--port=14265", "--interval=60"]
+    command: ["--host=iri", "--port=14265", "--interval=10", "--tag=FLASH9999999999999999999999", "--depth=50"]
     depends_on:
       - iri
 
+  # https://github.com/jinnerbichler/IOTA-Spammer/tree/docker_support
+  spammer:
+    image: jinnerbichler/iota-spammer
+    depends_on:
+      - iri
+    restart: always
+    environment:
+      - "SPAM_FREQUENCY=10"
+      - "SPAM_DEPTH_MIN=2"
+      - "SPAM_DEPTH_MAX=60"
+      - "IRI_HOST=http://iri"
+      - "IRI_PORT=14265"
+      - "REPEATER_ON=false"
+      - "SPAM_ON=true"
+
+  # https://github.com/jinnerbichler/IOTA-tangle-explorer/tree/docker
   explorer:
     image: jinnerbichler/iota-tangle-explorer
     ports:
