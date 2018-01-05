@@ -2,15 +2,15 @@ version: '2'
 
 services:
 
-  flash_one:
-    build: flash-server
-    environment:
-      - "IOTA_SEED=ECRUQZGHBGSIGINQV9FK9EWZZTODYCKTGLITLHUNFKIOAFQYWSUIXQDSKZYHOVLBIXWKRIXDNARDYADKU"
-      - "IRI_HOST=http://iota-node.duckdns.org"
-      - "IRI_PORT=14267"
-      - "IRI_TESTNET=true"
-    ports:
-      - "3000:3000"
+#  flash_one:
+#    build: flash-server
+#    environment:
+#      - "IOTA_SEED=ECRUQZGHBGSIGINQV9FK9EWZZTODYCKTGLITLHUNFKIOAFQYWSUIXQDSKZYHOVLBIXWKRIXDNARDYADKU"
+#      - "IRI_HOST=http://iota-node.duckdns.org"
+#      - "IRI_PORT=14267"
+#      - "IRI_TESTNET=true"
+#    ports:
+#      - "3000:3000"
 
   flash_two:
     build: flash-server

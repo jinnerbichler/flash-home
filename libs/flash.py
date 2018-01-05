@@ -34,6 +34,9 @@ class FlashClient:
     def fund(self, **kwargs):
         return self._post(path='/fund', **kwargs)
 
+    def finalize(self, **kwargs):
+        return self._post(path='/finalize', **kwargs)
+
     def _post(self, path, **kwargs):
         response = requests.post(self.url + path, json=kwargs)
         if response.status_code >= 400:

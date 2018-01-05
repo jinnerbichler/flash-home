@@ -5,7 +5,7 @@ from libs.flash import FlashClient
 from libs.iota_api import IotaApi
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 # Flash setup
 USER_ONE_HOST = 'http://localhost:3000'
@@ -101,6 +101,12 @@ def main():
     signed_bundles = user_two.flash.sign(bundles=signed_bundles)
     user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
     user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
+
+    ##########################################################
+    # Step 9: Finalizing channel
+    ##########################################################
+    logger.info('############# Finalizing channel #############')
+    final_transactions = user_one.flash.finalize()
 
     logger.info('Done!')
 
