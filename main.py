@@ -1,8 +1,8 @@
 import logging
 from collections import namedtuple
 
-from flash import FlashClient
-from iota_api import IotaApi
+from libs.flash import FlashClient
+from libs.iota_api import IotaApi
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -33,8 +33,8 @@ def main():
     user_two = User(flash=FlashClient(url=USER_TWO_HOST),
                     api=IotaApi(seed=USER_TWO_SEED, node_url=IRI_NODE))
 
-    logger.info('Initial user one balance {} IOTA'.format(user_one.api.get_account_balance()))
-    logger.info('Initial user two balance {} IOTA'.format(user_two.api.get_account_balance()))
+    # logger.info('Initial user one balance {} IOTA'.format(user_one.api.get_account_balance()))
+    # logger.info('Initial user two balance {} IOTA'.format(user_two.api.get_account_balance()))
 
     ##########################################################
     # Step 1: Initialise Flash channel
@@ -62,7 +62,17 @@ def main():
     user_two_flash = user_two.flash.settlement(settlementAddresses=settlement_addresses)
 
     ##########################################################
-    # Step 4: Transfer IOTA within channel
+    # Step 4: Fund channel
+    ##########################################################
+    logger.info('############# Funding channel #############')
+    transactions_one = user_one.flash.fund()
+    user_one.api.wait_for_confirmation([t['hash'] for t in transactions_one])
+    transactions_two = user_two.flash.fund()
+    user_one.api.wait_for_confirmation([t['hash'] for t in transactions_two])
+    logger.info(transactions_one)
+
+    ##########################################################
+    # Step 5: Transfer IOTA within channel
     ##########################################################
     logger.info('############# Initiating transfer #############')
     transfers = [{'value': 200, 'address': USER_TWO_SETTLEMENT}]
@@ -76,19 +86,21 @@ def main():
     signed_bundles = user_two.flash.sign(bundles=signed_bundles)
 
     ##########################################################
-    # Step 6: Applying signed bundles to Flash object
+    # Step 7: Applying signed bundles to Flash object
     ##########################################################
     logger.info('############# Applying signed bundles #############')
     user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
     user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
 
     ##########################################################
-    # Step 7: Closing channel
+    # Step 8: Closing channel
     ##########################################################
     logger.info('############# Closing channel #############')
     closing_bundles = user_one.flash.close()
     signed_bundles = user_one.flash.sign(bundles=closing_bundles)
     signed_bundles = user_two.flash.sign(bundles=signed_bundles)
+    user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
+    user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
 
     logger.info('Done!')
 

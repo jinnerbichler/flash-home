@@ -1,6 +1,7 @@
 import logging
 import operator
 
+import time
 from iota import Iota, ProposedTransaction, Address, TryteString, Tag, STANDARD_UNITS
 from iota.adapter.wrappers import RoutingWrapper
 from iota.crypto.types import Seed
@@ -50,12 +51,13 @@ class IotaApi:
         return self.api.get_inputs()['totalBalance']
 
     def get_bundles(self, transaction):
-        return self.api.get_bundles(transaction=transaction)
+        return self.api.get_bundles(transaction=transaction)['bundles']
 
     def replay_bundle(self, transaction):
         return self.api.replay_bundle(transaction=transaction, depth=self.depth)
 
-    def get_inclusion_states(self, transactions, milestone):
+    def get_inclusion_states(self, transactions, milestone=None):
+        milestone = milestone if milestone else self.get_node_info()['latestMilestone']
         return self.api.get_inclusion_states(transactions=transactions, tips=[milestone])['states']
 
     def get_transfers(self, inclusion_states=False):
@@ -88,6 +90,12 @@ class IotaApi:
         logger.info('########################## FINISHED PoW ###########################################')
 
         return bundle['bundle']
+
+    def wait_for_confirmation(self, transaction_hashes):
+        inclusion_states = [False for _ in transaction_hashes]
+        while not all(inclusion_states):
+            time.sleep(10)
+            inclusion_states = self.get_inclusion_states(transactions=transaction_hashes)
 
 
 class InsufficientBalanceException(Exception):

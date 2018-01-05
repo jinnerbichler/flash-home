@@ -1,5 +1,6 @@
 import time
 from fabric.api import run, env, task, put, cd, local, sudo
+
 env.use_ssh_config = True
 env.hosts = ['iota_node']
 
@@ -18,14 +19,20 @@ def tools():
     with cd('/srv/private-tangle'):
         put('.', '.')
         run('docker-compose --project-name private-tangle pull')
-        run('docker-compose --project-name private-tangle up -d --no-deps --force-recreate coordinator explorer spammer')
-        run('docker-compose --project-name private-tangle logs -f --tail 100 coordinator explorer spammer')
+        run('docker-compose --project-name private-tangle up -d --no-deps --force-recreate coordinator explorer')
+        run('docker-compose --project-name private-tangle logs -f --tail 100 coordinator explorer')
 
 
 @task
 def stop():
     with cd('/srv/private-tangle'):
         run('docker-compose --project-name private-tangle stop')
+
+@task
+def stop_coord():
+    with cd('/srv/private-tangle'):
+        run('docker-compose --project-name private-tangle stop coordinator')
+
 
 @task
 def down():
@@ -40,6 +47,12 @@ def logs():
 
 
 @task
+def logs_coord():
+    with cd('/srv/private-tangle'):
+        run('docker-compose --project-name private-tangle logs -f --tail 100 coordinator')
+
+
+@task
 def logs_all():
     with cd('/srv/private-tangle'):
         run('docker-compose logs -f')
@@ -47,7 +60,6 @@ def logs_all():
 
 @task
 def reset():
-
     # stop services and delete database
     down()
     time.sleep(1)
@@ -57,5 +69,3 @@ def reset():
     iri()
     time.sleep(5)
     tools()
-
-

@@ -28,11 +28,11 @@ services:
   # https://github.com/jinnerbichler/private-iota-testnet/tree/private-testnet
   coordinator:
     image: jinnerbichler/iota-coordinator
-    command: ["--host=iri", "--port=14265", "--interval=10", "--tag=FLASH9999999999999999999999", "--depth=50"]
+    command: ["--host=iri", "--port=14265", "--interval=5", "--depth=50"]
     depends_on:
       - iri
 
-  # https://github.com/jinnerbichler/IOTA-Spammer/tree/docker_support
+  # https://github.com/jinnerbichler/IOTA-Spammer/tree/private-testnet
   spammer:
     image: jinnerbichler/iota-spammer
     depends_on:
