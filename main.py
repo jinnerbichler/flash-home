@@ -93,48 +93,17 @@ def main():
     user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
 
     ##########################################################
-    # Step Xa: Another transfer
+    # Step 7: Performing multiple transactions
     ##########################################################
-    logger.info('############# Another transfer #############')
-    transfers = [{'value': 100, 'address': USER_TWO_SETTLEMENT}]
-    bundles = user_one.flash.transfer(transfers=transfers)
-    signed_bundles = user_one.flash.sign(bundles=bundles)
-    signed_bundles = user_two.flash.sign(bundles=signed_bundles)
-    user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
-    user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
-
-    ##########################################################
-    # Step Xb: Another transfer
-    ##########################################################
-    logger.info('############# Another transfer #############')
-    transfers = [{'value': 100, 'address': USER_TWO_SETTLEMENT}]
-    bundles = user_one.flash.transfer(transfers=transfers)
-    signed_bundles = user_one.flash.sign(bundles=bundles)
-    signed_bundles = user_two.flash.sign(bundles=signed_bundles)
-    user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
-    user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
-
-    ##########################################################
-    # Step Xc: Another transfer
-    ##########################################################
-    logger.info('############# Another transfer #############')
-    transfers = [{'value': 100, 'address': USER_TWO_SETTLEMENT}]
-    bundles = user_one.flash.transfer(transfers=transfers)
-    signed_bundles = user_one.flash.sign(bundles=bundles)
-    signed_bundles = user_two.flash.sign(bundles=signed_bundles)
-    user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
-    user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
-
-    ##########################################################
-    # Step Xd: Another transfer
-    ##########################################################
-    logger.info('############# Another transfer #############')
-    transfers = [{'value': 100, 'address': USER_TWO_SETTLEMENT}]
-    bundles = user_one.flash.transfer(transfers=transfers)
-    signed_bundles = user_one.flash.sign(bundles=bundles)
-    signed_bundles = user_two.flash.sign(bundles=signed_bundles)
-    user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
-    user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
+    num_transactions = 32
+    logger.info('############# Performing {} transactions  #############'.format(num_transactions))
+    for _ in range(num_transactions):
+        transfers = [{'value': 1, 'address': USER_TWO_SETTLEMENT}]
+        bundles = user_one.flash.transfer(transfers=transfers)
+        signed_bundles = user_one.flash.sign(bundles=bundles)
+        signed_bundles = user_two.flash.sign(bundles=signed_bundles)
+        user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
+        user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
 
     ##########################################################
     # Step 8: Closing channel
