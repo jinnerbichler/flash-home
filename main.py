@@ -64,12 +64,12 @@ def main():
     ##########################################################
     # Step 4: Fund channel
     ##########################################################
-    # logger.info('############# Funding channel #############')
-    # transactions_one = user_one.flash.fund()
-    # user_one.api.wait_for_confirmation([t['hash'] for t in transactions_one])
-    # transactions_two = user_two.flash.fund()
-    # user_one.api.wait_for_confirmation([t['hash'] for t in transactions_two])
-    # logger.info(transactions_one)
+    logger.info('############# Funding channel #############')
+    transactions_one = user_one.flash.fund()
+    user_one.api.wait_for_confirmation([t['hash'] for t in transactions_one])
+    transactions_two = user_two.flash.fund()
+    user_one.api.wait_for_confirmation([t['hash'] for t in transactions_two])
+    logger.info('Fund channel: {}, {}'.format(transactions_one, transactions_two))
 
     ##########################################################
     # Step 5: Transfer IOTA within channel
@@ -95,9 +95,9 @@ def main():
     ##########################################################
     # Step 7: Performing multiple transactions
     ##########################################################
-    num_transactions = 32
-    logger.info('############# Performing {} transactions  #############'.format(num_transactions))
-    for _ in range(num_transactions):
+    num_transactions = 2 ** (TREE_DEPTH + 1) - 2  # minus first and closing transaction
+    for transaction_count in range(num_transactions // 2):
+        logger.info('############# Performing transaction {} #############'.format(transaction_count))
         transfers = [{'value': 1, 'address': USER_TWO_SETTLEMENT}]
         bundles = user_one.flash.transfer(transfers=transfers)
         signed_bundles = user_one.flash.sign(bundles=bundles)
@@ -121,7 +121,7 @@ def main():
     logger.info('############# Finalizing channel #############')
     finalisation = user_one.flash.finalize()
 
-    logger.info('Done!')
+    logger.info('Done! {}'.format(finalisation))
 
 
 if __name__ == '__main__':
