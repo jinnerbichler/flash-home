@@ -9,11 +9,11 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Flash setup
 USER_ONE_HOST = 'http://localhost:3000'
-USER_ONE_SETTLEMENT = 'BIYIEOEMEXSDOMTPUVWWBBXJ9TKNU9CHJFAHMKNUH9UEDUZTOCT9WPIGNWPLNZNLDBV9WAYSTSZJGVREDQRRIUHAFY'
+USER_ONE_SETTLEMENT = 'BIYIEOEMEXSDOMTPUVWWBBXJ9TKNU9CHJFAHMKNUH9UEDUZTOCT9WPIGNWPLNZNLDBV9WAYSTSZJGVRED'
 USER_TWO_HOST = 'http://localhost:3001'
-USER_TWO_SETTLEMENT = 'JDNYBMMGUHCMROALCED9FEQIKPGOMERDX9EOHKSBQUTSOVDVINAVXZDYQTVKKXACDSYUCDMGBKPLDEYTXJCSAGMXOX'
+USER_TWO_SETTLEMENT = 'JDNYBMMGUHCMROALCED9FEQIKPGOMERDX9EOHKSBQUTSOVDVINAVXZDYQTVKKXACDSYUCDMGBKPLDEYTX'
 SECURITY = 2
-TREE_DEPTH = 4
+TREE_DEPTH = 3
 SIGNERS_COUNT = 2
 BALANCE = 4000
 DEPOSIT = [2000, 2000]
@@ -64,12 +64,12 @@ def main():
     ##########################################################
     # Step 4: Fund channel
     ##########################################################
-    logger.info('############# Funding channel #############')
-    transactions_one = user_one.flash.fund()
-    user_one.api.wait_for_confirmation([t['hash'] for t in transactions_one])
-    transactions_two = user_two.flash.fund()
-    user_one.api.wait_for_confirmation([t['hash'] for t in transactions_two])
-    logger.info(transactions_one)
+    # logger.info('############# Funding channel #############')
+    # transactions_one = user_one.flash.fund()
+    # user_one.api.wait_for_confirmation([t['hash'] for t in transactions_one])
+    # transactions_two = user_two.flash.fund()
+    # user_one.api.wait_for_confirmation([t['hash'] for t in transactions_two])
+    # logger.info(transactions_one)
 
     ##########################################################
     # Step 5: Transfer IOTA within channel
@@ -79,7 +79,7 @@ def main():
     bundles = user_one.flash.transfer(transfers=transfers)
 
     ##########################################################
-    # Step 5: Sign bundles
+    # Step 6: Sign bundles
     ##########################################################
     logger.info('############# Signing bundles #############')
     signed_bundles = user_one.flash.sign(bundles=bundles)
@@ -89,6 +89,50 @@ def main():
     # Step 7: Applying signed bundles to Flash object
     ##########################################################
     logger.info('############# Applying signed bundles #############')
+    user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
+    user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
+
+    ##########################################################
+    # Step Xa: Another transfer
+    ##########################################################
+    logger.info('############# Another transfer #############')
+    transfers = [{'value': 100, 'address': USER_TWO_SETTLEMENT}]
+    bundles = user_one.flash.transfer(transfers=transfers)
+    signed_bundles = user_one.flash.sign(bundles=bundles)
+    signed_bundles = user_two.flash.sign(bundles=signed_bundles)
+    user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
+    user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
+
+    ##########################################################
+    # Step Xb: Another transfer
+    ##########################################################
+    logger.info('############# Another transfer #############')
+    transfers = [{'value': 100, 'address': USER_TWO_SETTLEMENT}]
+    bundles = user_one.flash.transfer(transfers=transfers)
+    signed_bundles = user_one.flash.sign(bundles=bundles)
+    signed_bundles = user_two.flash.sign(bundles=signed_bundles)
+    user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
+    user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
+
+    ##########################################################
+    # Step Xc: Another transfer
+    ##########################################################
+    logger.info('############# Another transfer #############')
+    transfers = [{'value': 100, 'address': USER_TWO_SETTLEMENT}]
+    bundles = user_one.flash.transfer(transfers=transfers)
+    signed_bundles = user_one.flash.sign(bundles=bundles)
+    signed_bundles = user_two.flash.sign(bundles=signed_bundles)
+    user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
+    user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
+
+    ##########################################################
+    # Step Xd: Another transfer
+    ##########################################################
+    logger.info('############# Another transfer #############')
+    transfers = [{'value': 100, 'address': USER_TWO_SETTLEMENT}]
+    bundles = user_one.flash.transfer(transfers=transfers)
+    signed_bundles = user_one.flash.sign(bundles=bundles)
+    signed_bundles = user_two.flash.sign(bundles=signed_bundles)
     user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
     user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
 
@@ -106,7 +150,7 @@ def main():
     # Step 9: Finalizing channel
     ##########################################################
     logger.info('############# Finalizing channel #############')
-    final_transactions = user_one.flash.finalize()
+    finalisation = user_one.flash.finalize()
 
     logger.info('Done!')
 
