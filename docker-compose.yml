@@ -9,8 +9,11 @@ services:
       - "IRI_HOST=http://iota-node.duckdns.org"
       - "IRI_PORT=14267"
       - "IRI_TESTNET=true"
+      - "AUTH_USERNAME=user_one"
+      - "AUTH_PASSWORD=password_one"
     ports:
       - "3000:3000"
+
 
   flash_two:
     build: flash-server
@@ -19,5 +22,7 @@ services:
       - "IRI_HOST=http://iota-node.duckdns.org"
       - "IRI_PORT=14267"
       - "IRI_TESTNET=true"
+      - "AUTH_USERNAME=user_two"
+      - "AUTH_PASSWORD=password_two"
     ports:
       - "3001:3000"
