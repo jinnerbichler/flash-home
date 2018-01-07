@@ -28,9 +28,9 @@ User = namedtuple('User', ['flash', 'api'])
 
 # noinspection PyUnusedLocal
 def main():
-    user_one = User(flash=FlashClient(url=USER_ONE_HOST),
+    user_one = User(flash=FlashClient(url=USER_ONE_HOST, username='user_one', password='password_one'),
                     api=IotaApi(seed=USER_ONE_SEED, node_url=IRI_NODE))
-    user_two = User(flash=FlashClient(url=USER_TWO_HOST),
+    user_two = User(flash=FlashClient(url=USER_TWO_HOST, username='user_two', password='password_two'),
                     api=IotaApi(seed=USER_TWO_SEED, node_url=IRI_NODE))
 
     # logger.info('Initial user one balance {} IOTA'.format(user_one.api.get_account_balance()))
@@ -65,11 +65,11 @@ def main():
     # Step 4: Fund channel
     ##########################################################
     logger.info('############# Funding channel #############')
-    transactions_one = user_one.flash.fund()
-    user_one.api.wait_for_confirmation([t['hash'] for t in transactions_one])
-    transactions_two = user_two.flash.fund()
-    user_one.api.wait_for_confirmation([t['hash'] for t in transactions_two])
-    logger.info('Fund channel: {}, {}'.format(transactions_one, transactions_two))
+    # transactions_one = user_one.flash.fund()
+    # user_one.api.wait_for_confirmation([t['hash'] for t in transactions_one])
+    # transactions_two = user_two.flash.fund()
+    # user_one.api.wait_for_confirmation([t['hash'] for t in transactions_two])
+    # logger.info('Fund channel: {}, {}'.format(transactions_one, transactions_two))
 
     ##########################################################
     # Step 5: Transfer IOTA within channel
@@ -95,15 +95,15 @@ def main():
     ##########################################################
     # Step 7: Performing multiple transactions
     ##########################################################
-    num_transactions = 2 ** (TREE_DEPTH + 1) - 2  # minus first and closing transaction
-    for transaction_count in range(num_transactions // 2):
-        logger.info('############# Performing transaction {} #############'.format(transaction_count))
-        transfers = [{'value': 1, 'address': USER_TWO_SETTLEMENT}]
-        bundles = user_one.flash.transfer(transfers=transfers)
-        signed_bundles = user_one.flash.sign(bundles=bundles)
-        signed_bundles = user_two.flash.sign(bundles=signed_bundles)
-        user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
-        user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
+    # num_transactions = 2 ** (TREE_DEPTH + 1) - 2  # minus first and closing transaction
+    # for transaction_count in range(num_transactions // 2):
+    #     logger.info('############# Performing transaction {} #############'.format(transaction_count))
+    #     transfers = [{'value': 1, 'address': USER_TWO_SETTLEMENT}]
+    #     bundles = user_one.flash.transfer(transfers=transfers)
+    #     signed_bundles = user_one.flash.sign(bundles=bundles)
+    #     signed_bundles = user_two.flash.sign(bundles=signed_bundles)
+    #     user_one_flash = user_one.flash.apply(signedBundles=signed_bundles)
+    #     user_two_flash = user_two.flash.apply(signedBundles=signed_bundles)
 
     ##########################################################
     # Step 8: Closing channel
