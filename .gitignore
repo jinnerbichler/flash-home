@@ -5,3 +5,10 @@ iri-node/testnet_db
 ../flash-server/node_modules
 flash-server/package-lock.json
 flash-server/flash.db
+
+# home assistant config
+home-assistant/config/.HA_VERSION
+home-assistant/config/.uuid
+home-assistant/config/deps/
+home-assistant/config/home-assistant_v2.db
+home-assistant/config/tts/

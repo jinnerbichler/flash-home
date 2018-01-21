@@ -4,3 +4,6 @@
 [submodule "flash-server"]
 	path = flash-server
 	url = https://github.com/jinnerbichler/flash-server
+[submodule "home-assistant/home-assistant"]
+	path = home-assistant/home-assistant
+	url = https://github.com/jinnerbichler/home-assistant
