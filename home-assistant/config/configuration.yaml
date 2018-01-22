@@ -2,46 +2,25 @@ homeassistant:
   # Name of the location where Home Assistant is running
   name: Home
   # Location required to calculate the time the sun rises and sets
-  latitude: 0
-  longitude: 0
+  latitude: 48.2
+  longitude: 16.3667
   # Impacts weather/sunrise data (altitude above sea level in meters)
   elevation: 0
   # metric for Metric, imperial for Imperial
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-  time_zone: UTC
+  time_zone: Europe/Vienna
   # Customization file
   customize: !include customize.yaml
 
-# Show links to resources in log and frontend
-introduction:
-
-# Enables the frontend
-frontend:
-
 # Enables configuration UI
-config:
+#config:
 
 http:
   # Secrets are defined in the file secrets.yaml
   # api_password: !secret http_password
   # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
   # base_url: example.duckdns.org:8123
-
-# Checks for available updates
-# Note: This component will send some information about your system to
-# the developers to assist with development of Home Assistant.
-# For more information, please see:
-# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
-updater:
-  # Optional, allows Home Assistant developers to focus on popular components.
-  # include_used_components: true
-
-# Discover some devices automatically
-discovery:
-
-# Allows you to issue voice commands from the frontend in enabled browsers
-conversation:
 
 # Enables support for tracking state changes over time
 history:
@@ -55,16 +34,48 @@ map:
 # Track the sun
 sun:
 
-# Weather prediction
+# Sensor definitions
 sensor:
   - platform: yr
+  - platform: mqtt
+    name: coffee machine state
+    state_topic: "/coffee/state"
+    value_template: '{{ value_json.state }}'
+  - platform: mqtt
+    name: coffee machine balance
+    state_topic: "/coffee/state"
+    unit_of_measurement: IOTA
+    value_template: >-
+          {% if value_json.flash %}
+            {{ value_json.flash[0].flash.deposit[0] }}
+          {% else %}
+            0
+          {% endif %}
 
-# Text to speech
-tts:
-  - platform: google
+mqtt:
+  broker: 127.0.0.1
+  port: 1883
+  client_id: home-assistant
+  keepalive: 60
+  username: iota
+  password: flash
+  embedded:
+     listeners:
+        default:
+           max-connections: 50000
+           bind: 0.0.0.0:1883
+           type: tcp
+     auth:
+        plugins: ['auth.anonymous'] #List of plugins to activate for authentication among all registered plugins
+        allow-anonymous: false
+        password-file: /config/mqtt_passwd
 
-# Cloud
-cloud:
+#iota:
+#  iri: https://testnet140.tangle.works:443
+#  testnet: true
+#  wallets:
+#    - name: Default Wallet
+#      seed: OYYAHJDBNPHLVCKWMVBCYBYSUSSWLIDQ9AAXOMAMAMSUA9Y9PWXOCYGXIMLLBURGRHEZAZPEMUIXVIVQC
 
 group: !include groups.yaml
 automation: !include automations.yaml

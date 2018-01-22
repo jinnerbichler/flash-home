@@ -7,7 +7,7 @@ https://home-assistant.io/components/iota
 import logging
 from datetime import timedelta
 
-from homeassistant.components.iota import IotaDevice
+from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,6 +27,34 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     sensors.append(IotaNodeSensor(iota_config=iota_config))
 
     add_devices(sensors)
+
+
+class IotaDevice(Entity):
+    """Representation of a IOTA device."""
+
+    def __init__(self, name, seed, iri, is_testnet=False):
+        """Initialisation of the IOTA device."""
+        self._name = name
+        self._seed = seed
+        self.iri = iri
+        self.is_testnet = is_testnet
+
+    @property
+    def name(self):
+        """Return the default name of the device."""
+        return self._name
+
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes of the device."""
+        attr = {'name': self._name}
+        return attr
+
+    @property
+    def api(self):
+        """Construct API object for interaction with the IRI node."""
+        from iota import Iota
+        return Iota(adapter=self.iri, seed=self._seed)
 
 
 class IotaBalanceSensor(IotaDevice):

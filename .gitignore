@@ -2,7 +2,6 @@
 iri-node/testnet_db
 
 # flash server components
-../flash-server/node_modules
 flash-server/package-lock.json
 flash-server/flash.db
 

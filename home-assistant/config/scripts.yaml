@@ -1,0 +1,36 @@
+coffee_single:
+  alias: 'coffee_single'
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "/coffee/make"
+        payload: "single"
+coffee_double:
+  alias: 'coffee_double'
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "/coffee/make"
+        payload: "double"
+coffee_init:
+  alias: 'coffee_init'
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "/coffee/init"
+        payload: "init"
+    - service: mqtt.publish
+      data:
+        topic: "/coffee/state"
+        payload: '{"state": "INITIALISING"}'
+coffee_fund:
+  alias: 'coffee_fund'
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "/coffee/fund"
+        payload: "fund"
+    - service: mqtt.publish
+      data:
+        topic: "/coffee/state"
+        payload: '{"state": "FUNDING"}'

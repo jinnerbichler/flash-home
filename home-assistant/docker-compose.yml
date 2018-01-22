@@ -7,5 +7,6 @@ services:
       - "TZ=Europe/Berlin"
     ports:
       - 8123:8123
+      - 1883:1883
     volumes:
       - ./config:/config

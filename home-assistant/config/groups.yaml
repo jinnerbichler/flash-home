@@ -1,0 +1,27 @@
+iri_config:
+  name: IRI Node
+  entities:
+    - iota.iri
+    - iota.is_testnet
+    - sensor.iota_node
+
+iota_wallet_1:
+  name: Service Provider
+  entities:
+    - sensor.default_wallet_balance
+
+iota_wallet_2:
+  name: Customer
+  entities:
+    - sensor.zendi_wallet_balance
+
+coffee_machine:
+  name: Coffee Machine
+  control: hidden
+  entities:
+    - script.coffee_single
+    - script.coffee_double
+    - sensor.coffee_machine_balance
+    - sensor.coffee_machine_state
+    - script.coffee_init
+    - script.coffee_fund

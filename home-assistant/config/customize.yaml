@@ -1,0 +1,35 @@
+
+# IRI Node
+iota.iri:
+  friendly_name: IRI Node
+
+iota.is_testnet:
+  friendly_name: Testnet
+
+sensor.default_wallet_balance:
+  friendly_name: Balance
+  entity_picture: /local/iota.png
+
+sensor.zendi_wallet_balance:
+  friendly_name: Balance
+  entity_picture: /local/iota.png
+
+# Coffee Machine
+sensor.coffee_machine_state:
+  friendly_name: State
+
+sensor.coffee_machine_balance:
+  friendly_name: Remaining Balance
+
+script.coffee_single:
+  friendly_name: Make Single Coffee
+
+script.coffee_double:
+  friendly_name: Make Double Coffee
+
+script.coffee_init:
+  friendly_name: Initialize Flash Payment
+
+script.coffee_fund:
+  friendly_name: Fund Flash Payment
+
