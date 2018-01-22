@@ -11,6 +11,8 @@ import time
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('coffeemachine')
 
+PRICE_SINGLE_COFFEE = 20
+
 # reading MQTT config
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -43,9 +45,18 @@ def set_state(state):
 
 
 def publish_state(state):
-    state_json = json.dumps({'state': state,
-                             'flash': flash_objects})
+    state_json = json.dumps({'state': state})
     mqtt_client.publish(topic='/coffee/state', payload=state_json, retain=True)
+
+
+def publish_flash():
+    flash_json = json.dumps({'flash': flash_objects})
+    mqtt_client.publish(topic='/coffee/flash', payload=flash_json, retain=True)
+
+
+def publish_transactions(bundle_hashes):
+    bundle_json = json.dumps({'bundle_hashes': bundle_hashes})
+    mqtt_client.publish(topic='/coffee/transactions', payload=bundle_json, retain=True)
 
 
 class FlashClient:
@@ -132,6 +143,9 @@ def init_coffee():
         flash_objects[idx] = client.init(userIndex=idx, security=SECURITY, depth=TREE_DEPTH,
                                          signersCount=len(flash_clients), balance=BALANCE, deposit=DEPOSIT)
 
+    # publish changes
+    publish_flash()
+
     logger.info('Generating multisignature addresses')
     all_digests = [fo['partialDigests'] for fo in flash_objects]
     for client in flash_clients:
@@ -141,16 +155,9 @@ def init_coffee():
     for idx, client in enumerate(flash_clients):
         flash_objects[idx] = client.settlement(settlementAddresses=SETTLEMENT_ADDRESSES)
 
+    # publish changes
     set_state(State.INITIALISED)
-
-
-def pay_coffee(num):
-    value = 20 * num
-    logger.info('Paying {} IOTA for coffee'.format(value))
-    transfers = [{'value': value, 'address': SETTLEMENT_ADDRESSES[1]}]
-    bundles = flash_clients[0].transfer(transfers=transfers)
-    apply_and_sign(bundles)
-    return value
+    publish_flash()
 
 
 def apply_and_sign(bundles):
@@ -164,12 +171,17 @@ def apply_and_sign(bundles):
     for idx, client in enumerate(flash_clients):
         flash_objects[idx] = client.apply(signedBundles=bundles)
 
+    # publish changes
+    publish_flash()
+
 
 def fund():
     logger.info('Funding coffee machine')
     set_state(State.FUNDING)
-    for client in flash_clients:
-        client.fund()
+
+    transactions = [client.fund() for client in flash_clients]
+    publish_transactions(bundle_hashes=[tx[0]['bundle'] for tx in transactions])
+
     set_state(State.FUNDED)
 
 
@@ -178,6 +190,15 @@ def make_coffee(mode):
     num_coffees = 1 if mode == 'single' else 2
     payed_value = pay_coffee(num=num_coffees)
     publish_state('Payed {} IOTA for {} coffee'.format(payed_value, mode))
+
+
+def pay_coffee(num):
+    value = PRICE_SINGLE_COFFEE * num
+    logger.info('Paying {} IOTA for coffee'.format(value))
+    transfers = [{'value': value, 'address': SETTLEMENT_ADDRESSES[1]}]
+    bundles = flash_clients[0].transfer(transfers=transfers)
+    apply_and_sign(bundles)
+    return value
 
 
 def on_message(client, userdata, msg):

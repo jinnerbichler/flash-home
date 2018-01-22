@@ -5,6 +5,10 @@ coffee_single:
       data:
         topic: "/coffee/make"
         payload: "single"
+    - service: mqtt.publish
+      data:
+        topic: "/coffee/state"
+        payload: '{"state": "Making single coffee"}'
 coffee_double:
   alias: 'coffee_double'
   sequence:
@@ -12,6 +16,10 @@ coffee_double:
       data:
         topic: "/coffee/make"
         payload: "double"
+    - service: mqtt.publish
+      data:
+        topic: "/coffee/state"
+        payload: '{"state": "Making double coffee"}'
 coffee_init:
   alias: 'coffee_init'
   sequence:

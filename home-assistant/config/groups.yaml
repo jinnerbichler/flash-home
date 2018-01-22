@@ -25,3 +25,7 @@ coffee_machine:
     - sensor.coffee_machine_state
     - script.coffee_init
     - script.coffee_fund
+    - sensor.coffee_machine_provider_transaction
+    - sensor.coffee_machine_transaction
+    - weblink.coffee_machine_transaction
+    - weblink.coffee_provider_transaction

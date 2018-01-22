@@ -43,14 +43,9 @@ sensor:
     value_template: '{{ value_json.state }}'
   - platform: mqtt
     name: coffee machine balance
-    state_topic: "/coffee/state"
+    state_topic: "/coffee/flash"
     unit_of_measurement: IOTA
-    value_template: >-
-          {% if value_json.flash %}
-            {{ value_json.flash[0].flash.deposit[0] }}
-          {% else %}
-            0
-          {% endif %}
+    value_template: '{{ value_json.flash[0].flash.deposit[0] }}'
 
 mqtt:
   broker: 127.0.0.1
@@ -69,6 +64,15 @@ mqtt:
         plugins: ['auth.anonymous'] #List of plugins to activate for authentication among all registered plugins
         allow-anonymous: false
         password-file: /config/mqtt_passwd
+
+weblink:
+  entities:
+    - name: coffee_machine_transaction
+      url: http://iota-node.duckdns.org:8081/
+    - name: coffee_provider_transaction
+      url: http://iota-node.duckdns.org:8081/
+
+transaction_link:
 
 #iota:
 #  iri: https://testnet140.tangle.works:443

@@ -17,19 +17,21 @@ sensor.zendi_wallet_balance:
 # Coffee Machine
 sensor.coffee_machine_state:
   friendly_name: State
-
 sensor.coffee_machine_balance:
   friendly_name: Remaining Balance
-
 script.coffee_single:
   friendly_name: Make Single Coffee
-
 script.coffee_double:
   friendly_name: Make Double Coffee
-
 script.coffee_init:
   friendly_name: Initialize Flash Payment
-
 script.coffee_fund:
   friendly_name: Fund Flash Payment
+weblink.coffee_machine_transaction:
+  friendly_name: Last Transaction - Coffee Machine
+  hidden: true
+weblink.coffee_provider_transaction:
+  friendly_name: Last Transaction - Coffee Provider
+  hidden: true
+
 
