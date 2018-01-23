@@ -3,6 +3,7 @@ import os
 import logging
 import configparser
 from enum import Enum
+from threading import Thread
 
 import requests
 import paho.mqtt.client as mqtt
@@ -29,9 +30,8 @@ class State(Enum):
     FUNDED = 4
     CLOSING = 5
     CLOSED = 6
-    FINALISING = 7
-    FINALISED = 8
-    ERROR = 9
+    OUT_OF_FUNDS = 7
+    ERROR = 8
 
 
 current_state = State.UNINITIALISED
@@ -54,8 +54,8 @@ def publish_flash():
     mqtt_client.publish(topic='/coffee/flash', payload=flash_json, retain=True)
 
 
-def publish_transactions(bundle_hashes):
-    bundle_json = json.dumps({'bundle_hashes': bundle_hashes})
+def publish_transactions(bundle_hashes, reason):
+    bundle_json = json.dumps({'bundle_hashes': bundle_hashes, 'reason': reason})
     mqtt_client.publish(topic='/coffee/transactions', payload=bundle_json, retain=True)
 
 
@@ -83,6 +83,9 @@ class FlashClient:
 
     def settlement(self, **kwargs):
         return self._post(path='/flash/settlement/' + self.channel_id, **kwargs)
+
+    def settlement_address(self, **kwargs):
+        return self._post(path='/flash/settlement_address', **kwargs)
 
     def transfer(self, **kwargs):
         return self._post(path='/flash/transfer/' + self.channel_id, **kwargs)
@@ -119,9 +122,7 @@ TREE_DEPTH = 3
 SIGNERS_COUNT = 2
 BALANCE = 4000
 DEPOSIT = [2000, 2000]
-SETTLEMENT_ADDRESSES = [
-    'USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9U',
-    'USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9U']
+SETTLEMENT_ADDRESSES = []
 flash_clients = []
 
 # Flash server of coffee machine
@@ -150,6 +151,13 @@ def init_coffee():
     all_digests = [fo['partialDigests'] for fo in flash_objects]
     for client in flash_clients:
         client.multisignature(allDigests=all_digests)
+
+    logger.info('Fetching settlement addresses')
+    global SETTLEMENT_ADDRESSES
+    SETTLEMENT_ADDRESSES.clear()
+    for client in flash_clients:
+        address_response = client.settlement_address()
+        SETTLEMENT_ADDRESSES.append(address_response['address'])
 
     logger.info('Setting settlement addresses')
     for idx, client in enumerate(flash_clients):
@@ -180,9 +188,17 @@ def fund():
     set_state(State.FUNDING)
 
     transactions = [client.fund() for client in flash_clients]
-    publish_transactions(bundle_hashes=[tx[0]['bundle'] for tx in transactions])
+    publish_transactions(bundle_hashes=[tx[0]['bundle'] for tx in transactions], reason='Funding')
 
     set_state(State.FUNDED)
+
+
+def close_and_finalyse():
+    logger.info('Closing channel')
+    closing_bundles = flash_clients[0].close()
+    apply_and_sign(closing_bundles)
+
+    set_state(State.CLOSED)
 
 
 def make_coffee(mode):
@@ -201,22 +217,38 @@ def pay_coffee(num):
     return value
 
 
+is_accepting_messages = True
+
+
 def on_message(client, userdata, msg):
-    try:
-        if msg.topic == '/coffee/make':
-            make_coffee(mode=msg.payload.decode('utf-8'))
-        if msg.topic == '/coffee/init':
-            init_coffee()
-        if msg.topic == '/coffee/fund':
-            fund()
-    except:
-        logger.exception('Error while handling message')
-        time.sleep(1)
-        set_state(State.ERROR)
+    def handle_message(message):
+        global is_accepting_messages
+        if is_accepting_messages:
+            is_accepting_messages = False
+            try:
+                if message.topic == '/coffee/make':
+                    make_coffee(mode=message.payload.decode('utf-8'))
+                if message.topic == '/coffee/init':
+                    init_coffee()
+                if message.topic == '/coffee/fund':
+                    fund()
+                if message.topic == '/coffee/close':
+                    close_and_finalyse()
+            except:
+                logger.exception('Error while handling message')
+                time.sleep(1)
+                set_state(State.ERROR)
+            is_accepting_messages = True
+        else:
+            logger.info('Skipping {}'.format(msg.topic))
+
+    thread = Thread(target=handle_message, args=(msg,))
+    thread.start()
 
 
 def on_connect(client, userdata, flags, rc):
-    client.subscribe(topic='/coffee/#')
+    client.subscribe([('/coffee/make', 0), ('/coffee/init', 0),
+                      ('/coffee/fund', 0), ('/coffee/close', 0)])
 
 
 # setup Flash client

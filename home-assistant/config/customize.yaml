@@ -24,14 +24,14 @@ script.coffee_single:
 script.coffee_double:
   friendly_name: Make Double Coffee
 script.coffee_init:
-  friendly_name: Initialize Flash Payment
+  friendly_name: Initialize Flash Channel
 script.coffee_fund:
-  friendly_name: Fund Flash Payment
+  friendly_name: Fund Flash Channel
+script.coffee_close:
+  friendly_name: Close Flash Channel
 weblink.coffee_machine_transaction:
   friendly_name: Last Transaction - Coffee Machine
-  hidden: true
 weblink.coffee_provider_transaction:
   friendly_name: Last Transaction - Coffee Provider
-  hidden: true
 
 

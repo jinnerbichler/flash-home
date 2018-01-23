@@ -42,3 +42,14 @@ coffee_fund:
       data:
         topic: "/coffee/state"
         payload: '{"state": "FUNDING"}'
+coffee_close:
+  alias: 'coffee_close'
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "/coffee/close"
+        payload: "fund"
+    - service: mqtt.publish
+      data:
+        topic: "/coffee/state"
+        payload: '{"state": "CLOSING"}'

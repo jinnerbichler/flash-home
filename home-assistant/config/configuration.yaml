@@ -72,7 +72,11 @@ weblink:
     - name: coffee_provider_transaction
       url: http://iota-node.duckdns.org:8081/
 
-transaction_link:
+# custom components
+coffee_transaction_weblinks:
+coffee_state_listener:
+
+python_script:
 
 #iota:
 #  iri: https://testnet140.tangle.works:443
