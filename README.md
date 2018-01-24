@@ -20,7 +20,7 @@ and run it via
 docker-compose up coffee-client flash-coffee flash-provider
 ```
 
-in order to execute the protoype on your local machine.
+in order to execute the prototype on your local machine.
 
 The following endpoints are provided after the startup:
 
@@ -35,7 +35,7 @@ The following endpoints are provided after the startup:
 
 ## Components
 
-The exemplary setup mainly consists of five components (1) Home Assistant, (2) Flash client of coffee machine, (3) Flash server of coffee machine and (4) Flash server of service profider and (5) a private testnet of the Tangle. An overview of components and their interaction can be seen in the schema below.
+The exemplary setup mainly consists of five components: (1) Home Assistant, (2) Flash client of coffee machine, (3) Flash server of a coffee machine and (4) Flash server of a service provider and (5) a private testnet of the Tangle. An overview of components and their interaction can be seen in the schema below.
 
 ![Components](./home-assistant/config/www/architecture.png)
 
@@ -52,24 +52,24 @@ This proof of concept integrates a Senseo coffee machine into Home Assistant and
 
 ### Flash Client of Coffee Machine
 
-The client of the coffee machine is written in Python and can be run on a Raspberry Pi. It mainly received MQTT messages, performs payment and makes coffee :)
+The client of the coffee machine is written in Python and can be run on a Raspberry Pi. It mainly receives MQTT messages, performs payment and makes coffee :)
 
 * Source: `./coffee-client`
 
 ### Flash Server of Coffee Machine
 
-Flash server for managing the Flash channel part of the the coffee machine. This components stores the seed of the coffee machine.
+Flash server for managing the Flash channel part of the coffee machine. This component stores the seed of the coffee machine.
 
 * Source: [https://github.com/jinnerbichler/flash-server](https://github.com/jinnerbichler/flash-server)
 
 ### Flash Servier of Service Provider
 
-Flash server for managing the Flash channel part of the the service provider. This components stores the seed of the service provider.
+Flash server for managing the Flash channel part of the service provider. This component stores the seed of the service provider.
 
 * Source: [https://github.com/jinnerbichler/flash-server](https://github.com/jinnerbichler/flash-server)
 
 ### Private Instance of Tangle (Testnet)
 
-A private instance of the Tangle was setup for easier development. This includes a testnet of the Tangle, a utility coordinator, a network spammer and a Tangle explorer. Please have a look at `./iri-node` to get further insights.
+A private instance of the Tangle was set up for easier development. This includes a testnet of the Tangle, a utility coordinator, a network spammer and a Tangle explorer. Please have a look at `./iri-node` to get further insights.
 
 * Source: `./iri-node`
