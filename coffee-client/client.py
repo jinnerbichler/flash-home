@@ -269,6 +269,8 @@ def on_connect(client, userdata, flags, rc):
                       ('/coffee/fund', 0), ('/coffee/close', 0)])
 
 
+time.sleep(int(os.getenv('INIT_SLEEP', 0)))
+
 # setup Flash client
 logger.info('Initializing Flash clients')
 for client in flash_clients:

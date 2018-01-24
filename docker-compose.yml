@@ -2,7 +2,43 @@ version: '2'
 
 services:
 
-  flash_one:
+  ########################################################
+  # Home Assistant
+  ########################################################
+  home-assistant:
+    image: homeassistant/home-assistant:0.61.1
+    environment:
+      - "TZ=Europe/Berlin"
+    ports:
+      - 8123:8123  # Home Assistant
+      - 1883:1883  # MQTT
+    volumes:
+      - ./home-assistant/config:/config
+
+  ########################################################
+  # Coffee Machine Client
+  ########################################################
+  coffee-client:
+    build: coffee-client
+    environment:
+      - "FLASH_COFFEE_URL=http://flash-coffee:3000"
+      - "FLASH_COFFEE_USERNAME=user_one"
+      - "FLASH_COFFEE_PASSWORD=password_one"
+      - "FLASH_PROVIDER_URL=http://flash-provider:3000"
+      - "FLASH_PROVIDER_USERNAME=user_two"
+      - "FLASH_PROVIDER_PASSWORD=password_two"
+      - "MQTT_HOST=home-assistant"
+      - "MQTT_PORT=1883"
+      - "INIT_SLEEP=5"
+    depends_on:
+      - flash-coffee
+      - flash-provider
+      - home-assistant
+
+  ########################################################
+  # Flash Server Coffee Machine
+  ########################################################
+  flash-coffee:
     build: flash-server
     environment:
       - "IOTA_SEED=ECRUQZGHBGSIGINQV9FK9EWZZTODYCKTGLITLHUNFKIOAFQYWSUIXQDSKZYHOVLBIXWKRIXDNARDYADKU"
@@ -11,19 +47,21 @@ services:
       - "IRI_TESTNET=true"
       - "AUTH_USERNAME=user_one"
       - "AUTH_PASSWORD=password_one"
-      - "MONGODB_URL=mongo_one"
+      - "MONGODB_URL=mongo-coffee"
     ports:
       - "3000:3000"
     depends_on:
-      - mongo_one
+      - mongo-coffee
 
-  mongo_one:
+  mongo-coffee:
     image: mongo
     ports:
       - "27017:27017"
 
-
-  flash_two:
+  ########################################################
+  # Flash Server Service Provider
+  ########################################################
+  flash-provider:
     build: flash-server
     environment:
       - "IOTA_SEED=UXSVWCUKNZKOVYTWPWEF9KBHZLNSDGYDVBJGNYJKF9MZIOTSFCHRYNCKUQIYXBCILTVXL9NFMFIKQLUGX"
@@ -32,13 +70,13 @@ services:
       - "IRI_TESTNET=true"
       - "AUTH_USERNAME=user_two"
       - "AUTH_PASSWORD=password_two"
-      - "MONGODB_URL=mongo_two"
+      - "MONGODB_URL=mongo-provider"
     ports:
       - "3001:3000"
     depends_on:
-      - mongo_two
+      - mongo-provider
 
-  mongo_two:
+  mongo-provider:
     image: mongo
     ports:
       - "27018:27017"
