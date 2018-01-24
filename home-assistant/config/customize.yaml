@@ -17,28 +17,40 @@ sensor.zendi_wallet_balance:
 # Coffee Machine
 sensor.coffee_machine_state:
   friendly_name: State
+  assumed_state: 'UNITIALIZED'
+  initial_state: 'UNITIALIZED'
+  entity_picture: /local/iota.png
 sensor.coffee_machine_addresses:
   friendly_name: Remaining Multisignature Addresses
+  entity_picture: /local/iota.png
 sensor.coffee_machine_balance:
   friendly_name: Remaining Balance
+  entity_picture: /local/iota.png
 script.coffee_single:
   friendly_name: Make Single Coffee
+  entity_picture: /local/iota.png
 script.coffee_double:
   friendly_name: Make Double Coffee
+  entity_picture: /local/iota.png
 script.coffee_init:
   friendly_name: Initialize Flash Channel
+  entity_picture: /local/iota.png
 script.coffee_fund:
   friendly_name: Fund Flash Channel
+  entity_picture: /local/iota.png
 script.coffee_close:
   friendly_name: Close Flash Channel
+  entity_picture: /local/iota.png
 weblink.coffee_machine_transaction:
   friendly_name: Last Transaction - Coffee Machine
+  entity_picture: /local/iota.png
 weblink.coffee_provider_transaction:
   friendly_name: Last Transaction - Coffee Provider
+  entity_picture: /local/iota.png
 
 
 # Groups
 group.coffee_machine:
   order: 1
-group.documentation:
+group.instructions:
   order: 2

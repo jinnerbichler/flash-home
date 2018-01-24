@@ -3,16 +3,54 @@
 
         <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
         <style>
-
-            .img {
-                width: 60%;
-                margin-left: 20%;
-            }
         </style>
 
         <div>
-            <p>lksdjfl;aksdjfl;kasjdf;laskjdflsakjdf</p>
-            <img class="img" src="/local/architecture.png">
+
+            <p>
+                <span style="font-weight: bold">Volume per channel</span>: 10 MIOTA
+                <br>
+                <span style="font-weight: bold">Price single coffee</span>: 0.3 MIOTA
+                <br>
+                <span style="font-weight: bold">Price double coffee</span>: 0.6 MIOTA
+                <br>
+            </p>
+
+            <p>Additional information can be found on
+                <a target="_blank" href="https://github.com/jinnerbichler/flash-home">flash-home</a>
+                and <a target="_blank" href="https://github.com/jinnerbichler/flash-server">flash-server</a>.
+            </p>
+
+            <h4> The following steps are needed for making a coffee :)</h4>
+            <ol type="I">
+                <li>Initialize Flash Channel
+                    <p>
+                        Sets up Flash channel by generating multisignature addresses and building the proper
+                        tree.
+                    </p>
+                </li>
+                <li>Fund Flash Channel
+                    <p>
+                        Funds the channel by transfering 10
+                        <MIOTA></MIOTA>
+                        to the deposit address. This
+                        might take a while, so please be patient.
+                    </p>
+                </li>
+                <li>Make Single/Double Coffee
+                    <p>
+                        Making a coffee. A single coffee costs 0.3 MIOTA. A double coffee costs 0.6 MIOTA.
+                        This actions triggers a transaction in the Flash channel, which is signed by all
+                        parties.
+                    </p>
+                </li>
+                <li>Closing Flash Channel
+                    <p>
+                        Closes the Flash channel by generating and signing the closing bundle.
+                    </p>
+                </li>
+            </ol>
+            <!--<img class="img" src="/local/architecture.png">-->
         </div>
 
     </template>
@@ -31,41 +69,5 @@
                 type: Object,
             },
         },
-
-        // computeStateDisplay: function (stateObj) {
-        //     var text = stateObj.attributes.text;
-        //
-        //     if (text == null) {
-        //         text = stateObj.state
-        //     }
-        //     ;
-        //     return text.split("\n");
-        // },
-        //
-        // computeItem: function (item) {
-        //     var value = item.trim();
-        //
-        //     switch (value.substring(0, 1)) {
-        //         case "*":
-        //         case "!":
-        //         case "+":
-        //             return value.substring(1);
-        //         default:
-        //             return value;
-        //     }
-        // },
-        //
-        // computeClass: function (item) {
-        //     switch (item.trim().substring(0, 1)) {
-        //         case "*":
-        //             return "bold";
-        //         case "!":
-        //             return "red";
-        //         case "+":
-        //             return "green";
-        //         default:
-        //             return "normal";
-        //     }
-        // },
     });
 </script>

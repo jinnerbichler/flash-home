@@ -10,7 +10,7 @@ services:
     environment:
       - "TZ=Europe/Berlin"
     ports:
-      - 8123:8123  # Home Assistant
+      - 80:8123  # Home Assistant
       - 1883:1883  # MQTT
     volumes:
       - ./home-assistant/config:/config

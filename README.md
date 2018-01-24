@@ -24,7 +24,7 @@ in order to execute the protoype on your local machine.
 
 The following endpoints are provided after the startup:
 
-* Home Assistant: [http://localhost:8123](http://localhost:8123) (with UI)
+* Home Assistant: [http://localhost:80](http://localhost:80) (with UI)
 * Flash Server Coffee Machine: http://localhost:3000 (no UI)
 * Flash Server Service Provider: http://localhost:3001 (no UI)
 

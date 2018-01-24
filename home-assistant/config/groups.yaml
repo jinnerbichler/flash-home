@@ -15,8 +15,8 @@ iota_wallet_2:
   entities:
     - sensor.zendi_wallet_balance
 
-documentation:
-  name: Documentation
+instructions:
+  name: Instructions
   entities:
     - sensor.documentation
 
@@ -31,7 +31,7 @@ coffee_machine:
     - sensor.coffee_machine_addresses
     - script.coffee_init
     - script.coffee_fund
-    -  script.coffee_close
+    - script.coffee_close
     - sensor.coffee_machine_provider_transaction
     - sensor.coffee_machine_transaction
     - weblink.coffee_machine_transaction
