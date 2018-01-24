@@ -70,13 +70,6 @@ coffee_transaction_weblinks:
 coffee_state_listener:
 documentation:
 
-python_script:
-
-#camera:
-#  - platform: local_file
-#    name: Architecture Overview
-#    file_path: /config/www//architecture.png
-
 #iota:
 #  iri: https://testnet140.tangle.works:443
 #  testnet: true

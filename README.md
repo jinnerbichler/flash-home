@@ -1,5 +1,8 @@
 # Flash Home
+
 Proof of concept for integrating IOTA flash channels into home automation systems.
+
+TODO: explain general idea
 
 ## Setup
 
@@ -17,7 +20,7 @@ docker-compose up coffee-client flash-coffee flash-provider
 
 in order to execute the protoype on your local machine.
 
-The following endpoints are provided:
+The following endpoints are provided after the startup:
 
 * Home Assistant: [http://localhost:8123](http://localhost:8123) (with UI)
 * Flash Server Coffee Machine: http://localhost:3000 (no UI)
@@ -36,9 +39,14 @@ The exemplary setup mainly consists of five components (1) Home Assistant, (2) F
 
 ### Home Assistant
 
-**Home Assistant Source:** [https://github.com/home-assistant/home-assistant](https://github.com/home-assistant/home-assistant)
+Home Assistant is an open-source home automation platform running on Python 3. Track and control all devices at home and automate control. Perfect to run on a Raspberry Pi.
+At the time of writing more than 950 IoT components are supported, which can be integrated into Home Assistant (e.g. [Phillips Hue](https://home-assistant.io/components/hue/) or [Dyson 360 Eye](https://home-assistant.io/components/vacuum.dyson/) vacuum cleaner).
 
-**Home Assistant Config:** `home-assistant/config`
+* Home Assistant: [https://home-assistant.io/](https://home-assistant.io/)
+* Config: `home-assistant/config`
+* Custom components: `home-assistant/config/custom_components`
+
+This proof of concept integrates a Senseo coffee machine into Home Assistant and utilizes via MQTT messages with the coffee machine. The main part of the configuration can be found in `scrips.yaml`.
 
 ### Flash Client of Coffee Machine
 
