@@ -17,6 +17,8 @@ sensor.zendi_wallet_balance:
 # Coffee Machine
 sensor.coffee_machine_state:
   friendly_name: State
+sensor.coffee_machine_addresses:
+  friendly_name: Remaining Multisignature Addresses
 sensor.coffee_machine_balance:
   friendly_name: Remaining Balance
 script.coffee_single:
@@ -35,3 +37,8 @@ weblink.coffee_provider_transaction:
   friendly_name: Last Transaction - Coffee Provider
 
 
+# Groups
+group.coffee_machine:
+  order: 1
+group.documentation:
+  order: 2

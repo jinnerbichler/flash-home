@@ -1,0 +1,71 @@
+<dom-module id="state-card-value_only">
+    <template>
+
+        <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
+        <style>
+
+            .img {
+                width: 60%;
+                margin-left: 20%;
+            }
+        </style>
+
+        <div>
+            <p>lksdjfl;aksdjfl;kasjdf;laskjdflsakjdf</p>
+            <img class="img" src="/local/architecture.png">
+        </div>
+
+    </template>
+</dom-module>
+
+<script>
+    Polymer({
+        is: 'state-card-value_only',
+
+        properties: {
+            hass: {
+                type: Object,
+            },
+
+            stateObj: {
+                type: Object,
+            },
+        },
+
+        // computeStateDisplay: function (stateObj) {
+        //     var text = stateObj.attributes.text;
+        //
+        //     if (text == null) {
+        //         text = stateObj.state
+        //     }
+        //     ;
+        //     return text.split("\n");
+        // },
+        //
+        // computeItem: function (item) {
+        //     var value = item.trim();
+        //
+        //     switch (value.substring(0, 1)) {
+        //         case "*":
+        //         case "!":
+        //         case "+":
+        //             return value.substring(1);
+        //         default:
+        //             return value;
+        //     }
+        // },
+        //
+        // computeClass: function (item) {
+        //     switch (item.trim().substring(0, 1)) {
+        //         case "*":
+        //             return "bold";
+        //         case "!":
+        //             return "red";
+        //         case "+":
+        //             return "green";
+        //         default:
+        //             return "normal";
+        //     }
+        // },
+    });
+</script>

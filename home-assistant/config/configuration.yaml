@@ -13,30 +13,19 @@ homeassistant:
   # Customization file
   customize: !include customize.yaml
 
-# Enables configuration UI
-#config:
-
 http:
-  # Secrets are defined in the file secrets.yaml
-  # api_password: !secret http_password
-  # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
-  # base_url: example.duckdns.org:8123
 
-# Enables support for tracking state changes over time
-history:
-
-# View all events in a logbook
-logbook:
-
-# Enables a map showing the location of tracked devices
-map:
-
-# Track the sun
-sun:
+frontend:
+  javascript_version: es5
+  extra_html_url:
+    - /local/custom_ui/state-card-value_only.html
+    - /local/custom_ui/state-card-tiles.html
+  extra_html_url_es5:
+    - /local/custom_ui/state-card-value_only.html
+    - /local/custom_ui/state-card-tiles_es5.html
 
 # Sensor definitions
 sensor:
-  - platform: yr
   - platform: mqtt
     name: coffee machine state
     state_topic: "/coffee/state"
@@ -44,8 +33,12 @@ sensor:
   - platform: mqtt
     name: coffee machine balance
     state_topic: "/coffee/flash"
-    unit_of_measurement: IOTA
-    value_template: '{{ value_json.flash[0].flash.deposit[0] }}'
+    unit_of_measurement: MIOTA
+    value_template: '{{ value_json.flash[0].flash.deposit[0] / 1000000 }}'
+  - platform: mqtt
+    name: coffee machine addresses
+    state_topic: "/coffee/flash"
+    value_template: '{{ value_json.flash[0].flash.multisigDigestPool | length}}'
 
 mqtt:
   broker: 127.0.0.1
@@ -75,8 +68,14 @@ weblink:
 # custom components
 coffee_transaction_weblinks:
 coffee_state_listener:
+documentation:
 
 python_script:
+
+#camera:
+#  - platform: local_file
+#    name: Architecture Overview
+#    file_path: /config/www//architecture.png
 
 #iota:
 #  iri: https://testnet140.tangle.works:443

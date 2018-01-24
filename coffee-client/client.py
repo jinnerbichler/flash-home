@@ -12,7 +12,7 @@ import time
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('coffeemachine')
 
-PRICE_SINGLE_COFFEE = 20
+PRICE_SINGLE_COFFEE = 300000
 
 # reading MQTT config
 config = configparser.ConfigParser()
@@ -30,8 +30,9 @@ class State(Enum):
     FUNDED = 4
     CLOSING = 5
     CLOSED = 6
-    OUT_OF_FUNDS = 7
-    ERROR = 8
+    NO_FUNDS = 7
+    NO_ADDRESSES_LEFT = 8
+    ERROR = 9
 
 
 current_state = State.UNINITIALISED
@@ -118,10 +119,10 @@ class FlashClient:
 
 # reading Flash config
 SECURITY = 2
-TREE_DEPTH = 3
+TREE_DEPTH = 4
 SIGNERS_COUNT = 2
-BALANCE = 4000
-DEPOSIT = [2000, 2000]
+BALANCE = int(20e6)
+DEPOSIT = [BALANCE // 2, BALANCE // 2]
 SETTLEMENT_ADDRESSES = []
 flash_clients = []
 
@@ -143,9 +144,6 @@ def init_coffee():
     for idx, client in enumerate(flash_clients):
         flash_objects[idx] = client.init(userIndex=idx, security=SECURITY, depth=TREE_DEPTH,
                                          signersCount=len(flash_clients), balance=BALANCE, deposit=DEPOSIT)
-
-    # publish changes
-    publish_flash()
 
     logger.info('Generating multisignature addresses')
     all_digests = [fo['partialDigests'] for fo in flash_objects]
@@ -187,8 +185,11 @@ def fund():
     logger.info('Funding coffee machine')
     set_state(State.FUNDING)
 
-    transactions = [client.fund() for client in flash_clients]
-    publish_transactions(bundle_hashes=[tx[0]['bundle'] for tx in transactions], reason='Funding')
+    try:
+        transactions = [client.fund() for client in flash_clients]
+        publish_transactions(bundle_hashes=[tx[0]['bundle'] for tx in transactions], reason='Funding')
+    except:
+        logger.exception('Error while funding channel')
 
     set_state(State.FUNDED)
 
@@ -202,19 +203,36 @@ def close_and_finalyse():
 
 
 def make_coffee(mode):
+    global flash_objects
+
     logger.info('Making coffee {}'.format(mode))
+
+    # compute value
     num_coffees = 1 if mode == 'single' else 2
-    payed_value = pay_coffee(num=num_coffees)
-    publish_state('Payed {} IOTA for {} coffee'.format(payed_value, mode))
+    value = PRICE_SINGLE_COFFEE * num_coffees
 
+    # check state of deposits
+    if flash_objects[0]['flash']['deposit'][0] < value:
+        time.sleep(2)
+        set_state(State.NO_FUNDS)
+        return
 
-def pay_coffee(num):
-    value = PRICE_SINGLE_COFFEE * num
+    # check number of transactions left (at least one must be left for closing the channel)
+    if len(flash_objects[0]['flash']['multisigDigestPool']) <= 1:
+        time.sleep(2)
+        set_state(State.NO_ADDRESSES_LEFT)
+        return
+
     logger.info('Paying {} IOTA for coffee'.format(value))
+    pay_for_coffee(value=value)
+    publish_state('Payed {} MIOTA for {} coffee'.format(value / 1e6, mode))
+
+
+def pay_for_coffee(value):
+    global SETTLEMENT_ADDRESSES, flash_clients
     transfers = [{'value': value, 'address': SETTLEMENT_ADDRESSES[1]}]
     bundles = flash_clients[0].transfer(transfers=transfers)
     apply_and_sign(bundles)
-    return value
 
 
 is_accepting_messages = True
