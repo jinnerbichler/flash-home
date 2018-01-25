@@ -36,3 +36,5 @@ coffee_machine:
     - sensor.coffee_machine_transaction
     - weblink.coffee_machine_transaction
     - weblink.coffee_provider_transaction
+    - weblink.coffee_flash_server
+    - weblink.provider_flash_server

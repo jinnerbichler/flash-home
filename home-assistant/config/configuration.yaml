@@ -62,9 +62,13 @@ weblink:
       url: http://iota-node.duckdns.org:8081/
     - name: coffee_provider_transaction
       url: http://iota-node.duckdns.org:8081/
+    - name: coffee_flash_server
+      url: http://localhost:3000
+    - name: provider_flash_server
+      url: http://localhost:3001
 
 # custom components
-coffee_transaction_weblinks:
+coffee_updater:
 coffee_state_listener:
 documentation:
 

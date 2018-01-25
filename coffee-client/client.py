@@ -55,6 +55,11 @@ def publish_flash():
     mqtt_client.publish(topic='/coffee/flash', payload=flash_json, retain=True)
 
 
+def publish_channel_ids(channel_ids):
+    channel_ids_json = json.dumps({'channel_ids': channel_ids})
+    mqtt_client.publish(topic='/coffee/channel_ids', payload=channel_ids_json, retain=True)
+
+
 def publish_transactions(bundle_hashes, reason):
     bundle_json = json.dumps({'bundle_hashes': bundle_hashes, 'reason': reason})
     mqtt_client.publish(topic='/coffee/transactions', payload=bundle_json, retain=True)
@@ -145,6 +150,8 @@ def init_coffee():
         flash_objects[idx] = client.init(userIndex=idx, security=SECURITY, depth=TREE_DEPTH,
                                          signersCount=len(flash_clients), balance=BALANCE, deposit=DEPOSIT)
 
+    publish_channel_ids(channel_ids=[c.channel_id for c in flash_clients])
+
     logger.info('Generating multisignature addresses')
     all_digests = [fo['partialDigests'] for fo in flash_objects]
     for client in flash_clients:
@@ -164,6 +171,7 @@ def init_coffee():
     # publish changes
     set_state(State.INITIALISED)
     publish_flash()
+    publish_channel_ids(channel_ids=[c.channel_id for c in flash_clients])
 
 
 def apply_and_sign(bundles):

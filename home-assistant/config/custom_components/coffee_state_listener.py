@@ -15,6 +15,8 @@ BALANCE_COFFEE_SENSOR = 'sensor.coffee_machine_balance'
 ADDRESSES_COFFEE_SENSOR = 'sensor.coffee_machine_addresses'
 PROVIDER_TRANSACTION = 'weblink.coffee_provider_transaction'
 COFFEE_TRANSACTION = 'weblink.coffee_machine_transaction'
+COFFEE_FLASH_SERVER = 'weblink.coffee_flash_server'
+PROVIDER_FLASH_SERVER = 'weblink.provider_flash_server'
 
 
 def setup(hass, config):
@@ -25,16 +27,14 @@ def setup(hass, config):
             # hide all but init
             hide_entity(hass, entity_id=INIT_COFFEE_SCRIPT, hidden=False)
             for e in [SINGLE_COFFEE_SCRIPT, DOUBLE_COFFEE_SCRIPT, FUND_COFFEE_SCRIPT, ADDRESSES_COFFEE_SENSOR,
-                      CLOSE_COFFEE_SCRIPT, BALANCE_COFFEE_SENSOR, PROVIDER_TRANSACTION, COFFEE_TRANSACTION]:
+                      CLOSE_COFFEE_SCRIPT, BALANCE_COFFEE_SENSOR, PROVIDER_TRANSACTION, COFFEE_TRANSACTION,
+                      COFFEE_FLASH_SERVER, PROVIDER_FLASH_SERVER]:
                 hide_entity(hass, entity_id=e, hidden=True)
         elif new_state.state == 'INITIALISED':
             hide_entity(hass, entity_id=INIT_COFFEE_SCRIPT, hidden=True)
             hide_entity(hass, entity_id=FUND_COFFEE_SCRIPT, hidden=False)
             hide_entity(hass, entity_id=BALANCE_COFFEE_SENSOR, hidden=True)
             hide_entity(hass, entity_id=ADDRESSES_COFFEE_SENSOR, hidden=False)
-
-            # hide_entity(hass, entity_id=SINGLE_COFFEE_SCRIPT, hidden=False)  # ToDo: remove
-
         elif new_state.state == 'FUNDED':
             hide_entity(hass, entity_id=FUND_COFFEE_SCRIPT, hidden=True)
             hide_entity(hass, entity_id=BALANCE_COFFEE_SENSOR, hidden=False)
