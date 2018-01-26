@@ -9,7 +9,8 @@ services:
     image: homeassistant/home-assistant:0.61.1
     environment:
       - "TZ=Europe/Berlin"
-      - "COFFEE_FLASH_BASE_URL=http://localhost:4444"
+      - "COFFEE_FLASH_BASE_URL=http://flash-home.duckdns.org:3000/"
+      - "PROVIDER_FLASH_BASE_URL=http://flash-home.duckdns.org:3001/"
     ports:
       - 80:8123  # Home Assistant
       - 1883:1883  # MQTT
