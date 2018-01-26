@@ -9,8 +9,8 @@ def deploy():
     with cd('/srv/flash-home'):
         run('git pull origin master')
 
-        run('echo "COFFEE_FLASH_BASE_URL=http://flash-home.duckdns.org:3000/" > env')
-        run('echo "PROVIDER_FLASH_BASE_URL=http://flash-home.duckdns.org:3001/" >> env')
+        run('echo "COFFEE_FLASH_BASE_URL=http://flash-home.duckdns.org:3000" > env')
+        run('echo "PROVIDER_FLASH_BASE_URL=http://flash-home.duckdns.org:3001" >> env')
 
         run('docker-compose --project-name flash-home pull')
         run('docker-compose --project-name flash-home up -d --build --force-recreate')
