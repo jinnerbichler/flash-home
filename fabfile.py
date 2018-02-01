@@ -12,8 +12,8 @@ def deploy():
         run('echo "COFFEE_FLASH_BASE_URL=http://flash-home.duckdns.org:3000" > env')
         run('echo "PROVIDER_FLASH_BASE_URL=http://flash-home.duckdns.org:3001" >> env')
 
-        run('docker-compose --project-name flash-home pull')
-        run('docker-compose --project-name flash-home up -d --build --force-recreate')
+        run('docker-compose --project-nam'
+            'e flash-home up -d --build --force-recreate')
 
 
 @task
@@ -27,3 +27,8 @@ def init():
 def logs():
     with cd('/srv/flash-home'):
         run('docker-compose --project-name flash-home logs -f --tail 100')
+
+@task
+def down():
+    with cd('/srv/flash-home'):
+        run('docker-compose --project-name flash-home down -v')
